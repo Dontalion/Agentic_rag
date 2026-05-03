@@ -3,8 +3,13 @@ CLI initialization and setup utilities.
 Handles knowledge base preparation and pipeline setup.
 """
 import os
+from typing import Optional, Tuple
+
+from qdrant_client import QdrantClient
+from langchain_core.embeddings import Embeddings
 from agentic_rag.config.logging_config import get_logger
 from agentic_rag.vectorstore import load_documents, build_vectorstore
+from agentic_rag.vectorstore.embeddings import EmbeddingManager
 
 logger = get_logger(__name__)
 
@@ -27,15 +32,17 @@ def ensure_knowledge_base(kb_dir: str) -> None:
             )
 
 
-def build_rag_pipeline(kb_dir: str):
+def build_rag_pipeline(
+    kb_dir: str,
+) -> Tuple[Optional[QdrantClient], Optional[str], Optional[Embeddings]]:
     """
-    Load documents and build the vector store.
+    Load documents and build the Qdrant vector store.
     
     Args:
         kb_dir: Path to the knowledge base directory.
     
     Returns:
-        FAISS vector store or None if no documents found.
+        Tuple of (QdrantClient, collection_name, embeddings) or (None, None, None) if no documents found.
     """
     ensure_knowledge_base(kb_dir)
 
@@ -44,7 +51,13 @@ def build_rag_pipeline(kb_dir: str):
 
     if not docs:
         logger.warning("No documents loaded. RAG agent will be disabled.")
-        return None
+        return None, None, None
 
-    logger.info("Building vector store from %d documents...", len(docs))
-    return build_vectorstore(docs)
+    logger.info("Building Qdrant vector store from %d documents...", len(docs))
+    qdrant_client, collection_name = build_vectorstore(docs)
+
+    # Create embeddings instance for the retriever tool
+    embedding_manager = EmbeddingManager()
+    embeddings = embedding_manager.get_embeddings()
+
+    return qdrant_client, collection_name, embeddings

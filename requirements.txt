@@ -8,7 +8,6 @@ langchain-core>=0.3.0
 langchain-community>=0.3.0
 langchain-text-splitters>=0.3.0
 transformers>=4.40.0
-faiss-cpu>=1.7.4
 pydantic-settings>=2.0.0
 pypdf>=4.0.0
 duckduckgo-search>=6.0.0
@@ -16,4 +15,4 @@ markdownify>=0.13.0
 requests>=2.31.0
 tqdm>=4.66.0
 qdrant-client
-fastembed
+langchain_qdrant

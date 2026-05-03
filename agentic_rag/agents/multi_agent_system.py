@@ -8,9 +8,11 @@ Orchestrates multiple specialized agents:
 
 This module ONLY handles orchestration.
 """
-from typing import Optional
+from typing import Optional, Tuple
 
 from smolagents import CodeAgent, InferenceClientModel
+from qdrant_client import QdrantClient
+from langchain_core.embeddings import Embeddings
 from agentic_rag.config.config import get_settings
 from agentic_rag.config.logging_config import get_logger
 from agentic_rag.agents.rag_agent import create_rag_agent
@@ -21,13 +23,19 @@ logger = get_logger(__name__)
 settings = get_settings()
 
 
-def create_multi_agent_system(vectordb=None) -> CodeAgent:
+def create_multi_agent_system(
+    qdrant_client: Optional[QdrantClient] = None,
+    collection_name: Optional[str] = None,
+    embeddings: Optional[Embeddings] = None,
+) -> CodeAgent:
     """
     Create and return a multi-agent system.
 
     Args:
-        vectordb: A FAISS vector store instance. If None, the RAG agent
-                  will not be included.
+        qdrant_client: A Qdrant client instance. If None, the RAG agent
+                       will not be included.
+        collection_name: Name of the Qdrant collection.
+        embeddings: Embeddings instance for query encoding.
 
     Returns:
         CodeAgent (manager) that orchestrates all sub-agents.
@@ -41,12 +49,12 @@ def create_multi_agent_system(vectordb=None) -> CodeAgent:
 
     managed_agents = []
 
-    # RAG Agent (only if vectordb is provided)
-    if vectordb is not None:
-        rag_agent = create_rag_agent(model, vectordb)
+    # RAG Agent (only if qdrant_client and embeddings are provided)
+    if qdrant_client is not None and collection_name is not None and embeddings is not None:
+        rag_agent = create_rag_agent(model, qdrant_client, collection_name, embeddings)
         managed_agents.append(rag_agent)
     else:
-        logger.warning("RAG agent disabled: no vector database provided")
+        logger.warning("RAG agent disabled: no Qdrant vector database provided")
 
     # Web Search Agent
     web_search_agent = create_web_search_agent(model)

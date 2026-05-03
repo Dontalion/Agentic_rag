@@ -1,7 +1,7 @@
 """
 Vector Store Module
 
-Handles document loading, splitting, embedding, and FAISS vector database creation.
+Handles document loading, splitting, embedding, and Qdrant vector database creation.
 Completely independent from the agent system.
 
 Components:
@@ -9,7 +9,7 @@ Components:
 - splitters: Document chunking with tokenizer awareness
 - embeddings: Embedding model management
 - loader: High-level document loading interface
-- builder: FAISS vector store construction
+- builder: Qdrant vector store construction
 """
 from agentic_rag.vectorstore.loader import load_documents
 from agentic_rag.vectorstore.builder import build_vectorstore, VectorStoreBuilder

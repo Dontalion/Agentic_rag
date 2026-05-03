@@ -21,8 +21,10 @@ class Settings(BaseSettings):
     chunk_size: int = 200
     chunk_overlap: int = 20
 
-    # Vector database configuration
-    distance_strategy: str = "COSINE"
+    # Qdrant configuration
+    qdrant_collection_name: str = "agentic_rag"
+    qdrant_url: str = ":memory:"
+    qdrant_use_docker: bool = False
 
     # Similarity search configuration
     search_k: int = 5

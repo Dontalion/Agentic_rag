@@ -35,13 +35,17 @@ def main(kb_dir: str = None, log_level: str = None) -> None:
 
     kb_dir = kb_dir or DEFAULT_KB_DIR
     
-    # Build RAG pipeline
+    # Build RAG pipeline (Qdrant)
     logger.info("Initializing RAG system...")
-    vectordb = build_rag_pipeline(kb_dir)
+    qdrant_client, collection_name, embeddings = build_rag_pipeline(kb_dir)
 
     # Create multi-agent system
     logger.info("Creating multi-agent system...")
-    manager = create_multi_agent_system(vectordb=vectordb)
+    manager = create_multi_agent_system(
+        qdrant_client=qdrant_client,
+        collection_name=collection_name,
+        embeddings=embeddings,
+    )
 
     # Interactive loop
     print("\n" + "=" * 60)

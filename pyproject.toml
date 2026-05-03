@@ -13,7 +13,6 @@ dependencies = [
     "langchain-community>=0.3.0",
     "langchain-text-splitters>=0.3.0",
     "transformers>=4.40.0",
-    "faiss-cpu>=1.7.4",
     "pydantic-settings>=2.0.0",
     "pypdf>=4.0.0",
     "duckduckgo-search>=6.0.0",
