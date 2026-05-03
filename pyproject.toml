@@ -20,6 +20,9 @@ dependencies = [
     "markdownify>=0.13.0",
     "requests>=2.31.0",
     "tqdm>=4.66.0",
+    "qdrant-client",
+    "fastembed",
+    
 ]
 
 [project.scripts]
