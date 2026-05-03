@@ -1,0 +1,34 @@
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    """
+    Configuration settings for the application using environment variables and .env file.
+    """
+    # API Keys
+    openai_api_key: str = ""
+    huggingface_token: str = ""
+    
+    # Embedding model configuration
+    embedding_model_name: str = "thenlper/gte-small"
+    
+    # Tokenizer model configuration
+    tokenizer_model_name: str = "thenlper/gte-small"
+    
+    # Text splitting configuration
+    chunk_size: int = 200
+    chunk_overlap: int = 20
+    
+    # Vector database configuration
+    distance_strategy: str = "COSINE"
+    
+    # Similarity search configuration
+    search_k: int = 5
+    
+    class Config:
+        # Read from environment variables and .env file
+        env_prefix = "AGENTIC_RAG_"
+        env_file = ".env"
+        case_sensitive = False
+
+# Create a global settings instance
+settings = Settings()
