@@ -1,7 +1,6 @@
 from data_loader import load_documents
 from inget import process_documents
 from config import get_settings
-from langchain_core.vectorstores import VectorStore
 
 settings = get_settings()
 

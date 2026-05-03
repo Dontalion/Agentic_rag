@@ -1,5 +1,8 @@
 from smolagents import Tool
 from langchain_core.vectorstores import VectorStore
+from config import get_settings
+
+settings = get_settings()
 
 
 class RetrieverTool(Tool):
@@ -24,7 +27,7 @@ class RetrieverTool(Tool):
 
         docs = self.vectordb.similarity_search(
             query,
-            k=7,
+            k=settings.retrieval_k,
         )
 
         return "\nRetrieved documents:\n" + "".join(

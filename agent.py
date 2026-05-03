@@ -6,8 +6,6 @@ from config import get_settings
 
 settings = get_settings()
 
-model = InferenceClientModel(settings.model_name, token=settings.huggingface_token if settings.huggingface_token else None)
-
 def build_vectordb():
     knowledge_base = [
         {"text": "Example document text 1", "source": "source1/file.txt"},
