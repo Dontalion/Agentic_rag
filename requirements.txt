@@ -1,0 +1,25 @@
+# Core agent framework
+smolagents>=0.1.0
+
+# LangChain ecosystem
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-text-splitters>=0.3.0
+
+# Embeddings and vector database
+transformers>=4.40.0
+faiss-cpu>=1.7.4
+
+# Configuration
+pydantic-settings>=2.0.0
+
+# PDF processing
+pypdf>=4.0.0
+
+# Web search and scraping
+duckduckgo-search>=6.0.0
+markdownify>=0.13.0
+requests>=2.31.0
+
+# Utilities
+tqdm>=4.66.0

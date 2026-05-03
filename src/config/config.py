@@ -26,7 +26,6 @@ class Settings(BaseSettings):
 
     # Similarity search configuration
     search_k: int = 5
-    retrieval_k: int = 5
 
     class Config:
         # Read from environment variables and .env file
