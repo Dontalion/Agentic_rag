@@ -1,7 +1,9 @@
 from smolagents import Tool
 from langchain_core.vectorstores import VectorStore
-from src.config.config import get_settings
+from agentic_rag.config.config import get_settings
+from agentic_rag.config.logging_config import get_logger
 
+logger = get_logger(__name__)
 settings = get_settings()
 
 
@@ -27,6 +29,7 @@ class RetrieverTool(Tool):
     def forward(self, query: str) -> str:
         assert isinstance(query, str), "Your search query must be a string"
 
+        logger.info("Retrieving documents for query: '%s'", query)
         docs = self.vectordb.similarity_search(
             query,
             k=settings.search_k,

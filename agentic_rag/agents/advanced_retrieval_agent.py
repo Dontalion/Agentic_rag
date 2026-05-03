@@ -3,8 +3,8 @@ Advanced Retrieval Agent using smolagents.
 This agent specializes in retrieving information from the knowledge base.
 """
 from smolagents import InferenceClientModel, CodeAgent
-from src.tools.retriever_tool import RetrieverTool
-from src.config.config import get_settings
+from agentic_rag.tools.retriever_tool import RetrieverTool
+from agentic_rag.config.config import get_settings
 
 settings = get_settings()
 

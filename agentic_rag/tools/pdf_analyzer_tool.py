@@ -2,9 +2,12 @@
 PDF Analyzer Tool for smolagents.
 Reads and extracts text from PDF files, then provides analysis.
 """
+import os
 from smolagents import Tool
 from pypdf import PdfReader
-import os
+from agentic_rag.config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class PDFAnalyzerTool(Tool):
@@ -27,6 +30,7 @@ class PDFAnalyzerTool(Tool):
     output_type = "string"
 
     def forward(self, pdf_path: str, max_pages: int = 10) -> str:
+        logger.info("Analyzing PDF: %s (max_pages=%d)", pdf_path, max_pages)
         if not os.path.exists(pdf_path):
             return f"Error: File not found at path '{pdf_path}'. Please provide a valid PDF file path."
 
@@ -73,4 +77,5 @@ End of PDF content.
             return result
 
         except Exception as e:
+            logger.error("Error analyzing PDF '%s': %s", pdf_path, e)
             return f"Error analyzing PDF '{pdf_path}': {type(e).__name__}: {str(e)}"

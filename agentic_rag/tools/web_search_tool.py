@@ -4,6 +4,9 @@ Performs web searches using DuckDuckGo.
 """
 from smolagents import Tool
 from duckduckgo_search import DDGS
+from agentic_rag.config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class WebSearchTool(Tool):
@@ -28,6 +31,7 @@ class WebSearchTool(Tool):
 
     def forward(self, query: str, max_results: int = 5) -> str:
         try:
+            logger.info("Performing web search for: '%s' (max_results=%d)", query, max_results)
             with DDGS() as ddgs:
                 results = list(ddgs.text(query, max_results=max_results))
 
@@ -49,4 +53,5 @@ class WebSearchTool(Tool):
             return f"Web Search Results for '{query}':\n\n" + "\n".join(formatted_results)
 
         except Exception as e:
+            logger.error("Error performing web search for '%s': %s", query, e)
             return f"Error performing web search for '{query}': {type(e).__name__}: {str(e)}"

@@ -3,6 +3,9 @@ import requests
 from markdownify import markdownify
 from requests.exceptions import RequestException
 from smolagents import tool
+from agentic_rag.config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 @tool
@@ -17,6 +20,7 @@ def visit_webpage(url: str) -> str:
     """
     try:
         # Send a GET request to the URL
+        logger.info("Fetching webpage: %s", url)
         response = requests.get(url)
         response.raise_for_status()  # Raise an exception for bad status codes
 
@@ -29,6 +33,8 @@ def visit_webpage(url: str) -> str:
         return markdown_content
 
     except RequestException as e:
+        logger.error("Error fetching webpage %s: %s", url, e)
         return f"Error fetching the webpage: {str(e)}"
     except Exception as e:
+        logger.error("Unexpected error fetching webpage %s: %s", url, e)
         return f"An unexpected error occurred: {str(e)}"

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-rag"
+version = "0.1.0"
+description = "Multi-Agent RAG System with smolagents"
+requires-python = ">=3.10"
+dependencies = [
+    "smolagents>=0.1.0",
+    "langchain-core>=0.3.0",
+    "langchain-community>=0.3.0",
+    "langchain-text-splitters>=0.3.0",
+    "transformers>=4.40.0",
+    "faiss-cpu>=1.7.4",
+    "pydantic-settings>=2.0.0",
+    "pypdf>=4.0.0",
+    "duckduckgo-search>=6.0.0",
+    "markdownify>=0.13.0",
+    "requests>=2.31.0",
+    "tqdm>=4.66.0",
+]
+
+[project.scripts]
+agentic-rag = "agentic_rag.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agentic_rag*"]
