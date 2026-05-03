@@ -1,4 +1,4 @@
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 
 def load_documents(knowledge_base):
     """

@@ -1,8 +1,8 @@
 from tqdm import tqdm
 from transformers import AutoTokenizer
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import DistanceStrategy
 from config import get_settings
 
@@ -19,7 +19,10 @@ def process_documents(source_docs):
         FAISS vector database
     """
     text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
-        AutoTokenizer.from_pretrained(settings.tokenizer_model_name, token=settings.huggingface_token if settings.huggingface_token else None),
+        AutoTokenizer.from_pretrained(
+            settings.tokenizer_model_name,
+            use_auth_token=settings.huggingface_token if settings.huggingface_token else None,
+        ),
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
         add_start_index=True,
@@ -44,9 +47,15 @@ def process_documents(source_docs):
 
     embedding_model = HuggingFaceEmbeddings(
         model_name=settings.embedding_model_name,
-        model_kwargs={"token": settings.huggingface_token} if settings.huggingface_token else {}
+        model_kwargs={"use_auth_token": settings.huggingface_token}
+        if settings.huggingface_token
+        else {},
     )
-    distance_strategy = DistanceStrategy.COSINE if settings.distance_strategy.upper() == "COSINE" else DistanceStrategy.EUCLIDEAN
+    distance_strategy = (
+        DistanceStrategy.COSINE
+        if settings.distance_strategy.upper() == "COSINE"
+        else DistanceStrategy.EUCLIDEAN_DISTANCE
+    )
     vectordb = FAISS.from_documents(
         documents=docs_processed,
         embedding=embedding_model,
