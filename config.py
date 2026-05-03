@@ -5,26 +5,26 @@ class Settings(BaseSettings):
     Configuration settings for the application using environment variables and .env file.
     """
     # API Keys
-    openai_api_key: str = ""
-    huggingface_token: str = ""
+    openai_api_key: str
+    huggingface_token: str
     
     # Model configuration
-    model_name: str = "meta-llama/Llama-3.1-70B-Instruct"
+    model_name: str 
     # Embedding model configuration
-    embedding_model_name: str = "thenlper/gte-small"
+    embedding_model_name: str 
     
     # Tokenizer model configuration
-    tokenizer_model_name: str = "thenlper/gte-small"
+    tokenizer_model_name: str 
     
     # Text splitting configuration
-    chunk_size: int = 200
-    chunk_overlap: int = 20
+    chunk_size: int 
+    chunk_overlap: int
     
     # Vector database configuration
-    distance_strategy: str = "COSINE"
+    distance_strategy: str
     
     # Similarity search configuration
-    search_k: int = 5
+    search_k: int
     
     class Config:
         # Read from environment variables and .env file
