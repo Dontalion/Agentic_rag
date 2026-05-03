@@ -1,71 +1,20 @@
 """
-Document loader for the vector store.
-Supports PDF, TXT, and MD files.
+Main document loader interface.
+Handles loading documents from directories and multiple sources.
+
+Delegates file format-specific logic to file_loaders module.
 """
 import os
 from pathlib import Path
 from typing import List, Union
 
 from langchain_core.documents import Document
-from pypdf import PdfReader
 from agentic_rag.config.logging_config import get_logger
+from agentic_rag.vectorstore.file_loaders import load_single_file
 
 logger = get_logger(__name__)
 
 SUPPORTED_EXTENSIONS = {".pdf", ".txt", ".md"}
-
-
-def _load_pdf(file_path: str) -> str:
-    """Extract text content from a PDF file."""
-    reader = PdfReader(file_path)
-    text_parts = []
-    for page in reader.pages:
-        page_text = page.extract_text()
-        if page_text:
-            text_parts.append(page_text)
-    return "\n\n".join(text_parts)
-
-
-def _load_text_file(file_path: str) -> str:
-    """Read content from a plain text or markdown file."""
-    with open(file_path, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-def load_file(file_path: str) -> Document:
-    """
-    Load a single file and return it as a Document.
-
-    Args:
-        file_path: Absolute or relative path to the file.
-
-    Returns:
-        A Document object with the file content and metadata.
-
-    Raises:
-        FileNotFoundError: If the file does not exist.
-        ValueError: If the file extension is not supported.
-    """
-    file_path = os.path.abspath(file_path)
-
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"File not found: {file_path}")
-
-    ext = Path(file_path).suffix.lower()
-    if ext not in SUPPORTED_EXTENSIONS:
-        raise ValueError(
-            f"Unsupported file extension '{ext}'. Supported: {SUPPORTED_EXTENSIONS}"
-        )
-
-    if ext == ".pdf":
-        content = _load_pdf(file_path)
-    else:
-        content = _load_text_file(file_path)
-
-    return Document(
-        page_content=content,
-        metadata={"source": file_path, "filename": os.path.basename(file_path)},
-    )
 
 
 def load_directory(directory_path: str, recursive: bool = True) -> List[Document]:
@@ -89,7 +38,7 @@ def load_directory(directory_path: str, recursive: bool = True) -> List[Document
     for file_path in Path(directory_path).glob(pattern):
         if file_path.is_file() and file_path.suffix.lower() in SUPPORTED_EXTENSIONS:
             try:
-                doc = load_file(str(file_path))
+                doc = load_single_file(str(file_path))
                 documents.append(doc)
                 logger.info("Loaded: %s", file_path)
             except Exception as e:
@@ -121,6 +70,7 @@ def load_documents(knowledge_base: Union[List[dict], str, List[str]]) -> List[Do
             )
             for doc in knowledge_base
         ]
+        logger.info("Loaded %d documents from legacy format", len(source_docs))
         return source_docs
 
     # Single directory path
@@ -128,16 +78,21 @@ def load_documents(knowledge_base: Union[List[dict], str, List[str]]) -> List[Do
         return load_directory(knowledge_base)
 
     # List of file paths
-    if isinstance(knowledge_base, list) and isinstance(knowledge_base[0], str):
-        documents = []
-        for file_path in knowledge_base:
+    if isinstance(knowledge_base, list):
+        all_docs = []
+        for path in knowledge_base:
             try:
-                doc = load_file(file_path)
-                documents.append(doc)
+                if os.path.isdir(path):
+                    all_docs.extend(load_directory(path))
+                else:
+                    all_docs.append(load_single_file(path))
             except Exception as e:
-                logger.warning("Failed to load %s: %s", file_path, e)
-        return documents
+                logger.warning("Failed to load %s: %s", path, e)
+        
+        logger.info("Loaded %d documents from file list", len(all_docs))
+        return all_docs
 
     raise ValueError(
-        "knowledge_base must be a list of dicts, a directory path, or a list of file paths"
+        f"Unsupported knowledge_base type: {type(knowledge_base)}. "
+        "Expected: dict list, directory path, or file paths list"
     )

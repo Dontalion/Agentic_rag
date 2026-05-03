@@ -1,18 +1,17 @@
 """
 Vector store builder.
-Handles document splitting, embedding, and FAISS creation.
+Orchestrates document splitting, embedding, and FAISS creation.
+
 """
 from typing import Optional
 
-from tqdm import tqdm
-from transformers import AutoTokenizer
 from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import DistanceStrategy
 from agentic_rag.config.config import get_settings
 from agentic_rag.config.logging_config import get_logger
+from agentic_rag.vectorstore.splitters import TextSplitterManager
+from agentic_rag.vectorstore.embeddings import EmbeddingManager
 
 logger = get_logger(__name__)
 settings = get_settings()
@@ -33,46 +32,12 @@ class VectorStoreBuilder:
         self.embedding_model = embedding_model or settings.embedding_model_name
         self.distance_strategy = distance_strategy or settings.distance_strategy
 
-    def _create_splitter(self) -> RecursiveCharacterTextSplitter:
-        """Create a text splitter using the configured tokenizer."""
-        tokenizer = AutoTokenizer.from_pretrained(
-            settings.tokenizer_model_name,
-            use_auth_token=settings.huggingface_token or None,
-        )
-        return RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
-            tokenizer,
+        # Initialize managers
+        self.splitter_manager = TextSplitterManager(
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
-            add_start_index=True,
-            strip_whitespace=True,
-            separators=["\n\n", "\n", ".", " ", ""],
         )
-
-    def _split_documents(self, docs: list[Document]) -> list[Document]:
-        """Split documents into chunks, keeping only unique content."""
-        logger.info("Splitting %d documents...", len(docs))
-        splitter = self._create_splitter()
-
-        processed = []
-        seen = set()
-        for doc in tqdm(docs, desc="Splitting"):
-            for chunk in splitter.split_documents([doc]):
-                if chunk.page_content not in seen:
-                    seen.add(chunk.page_content)
-                    processed.append(chunk)
-
-        logger.info("Produced %d unique chunks", len(processed))
-        return processed
-
-    def _create_embeddings(self) -> HuggingFaceEmbeddings:
-        """Create the embedding model."""
-        logger.info("Loading embedding model: %s", self.embedding_model)
-        return HuggingFaceEmbeddings(
-            model_name=self.embedding_model,
-            model_kwargs={"use_auth_token": settings.huggingface_token}
-            if settings.huggingface_token
-            else {},
-        )
+        self.embedding_manager = EmbeddingManager(embedding_model=self.embedding_model)
 
     def build(self, docs: list[Document]) -> FAISS:
         """
@@ -87,17 +52,21 @@ class VectorStoreBuilder:
         if not docs:
             raise ValueError("Cannot build vector store from empty document list")
 
-        split_docs = self._split_documents(docs)
+        # Split documents
+        split_docs = self.splitter_manager.split_documents(docs)
 
+        # Get embeddings
         logger.info("Embedding %d chunks...", len(split_docs))
-        embeddings = self._create_embeddings()
+        embeddings = self.embedding_manager.get_embeddings()
 
+        # Determine distance strategy
         strategy = (
             DistanceStrategy.COSINE
             if self.distance_strategy.upper() == "COSINE"
             else DistanceStrategy.EUCLIDEAN_DISTANCE
         )
 
+        # Build FAISS vector store
         vectordb = FAISS.from_documents(
             documents=split_docs,
             embedding=embeddings,
