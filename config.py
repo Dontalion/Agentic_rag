@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     huggingface_token: str = ""
     
+    # Model configuration
+    model_name: str = "meta-llama/Llama-3.1-70B-Instruct"
     # Embedding model configuration
     embedding_model_name: str = "thenlper/gte-small"
     
@@ -31,4 +33,6 @@ class Settings(BaseSettings):
         case_sensitive = False
 
 # Create a global settings instance
-settings = Settings()
+@lru_cache()
+def get_settings():
+    return Settings()

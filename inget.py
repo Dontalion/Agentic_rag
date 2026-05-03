@@ -4,7 +4,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores.utils import DistanceStrategy
-from config import settings
+from config import get_settings
+
+settings = get_settings()
 
 def process_documents(source_docs):
     """
