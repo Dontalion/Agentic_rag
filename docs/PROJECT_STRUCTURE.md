@@ -22,6 +22,7 @@ Agentic_rag/
 │   ├── agents/                  # Specialized agents (RAG, Web, PDF)
 │   ├── tools/                   # Custom tools used by agents
 │   ├── vectorstore/             # Document loading, splitting, and Qdrant integration
+│   ├── utils/                   # back-end utilities 
 │   ├── config/                  # Configuration and logging
 │   ├── ui/                      # Streamlit web interface (Phase 1+)
 │   ├── cli.py                   # Command-line interface entry point
@@ -76,6 +77,14 @@ Handles everything related to documents and the vector database.
 | `splitters.py` | Text chunking logic |
 | `embeddings.py` | Embedding model management (currently `thenlper/gte-small`) |
 
+### `agentic_rag/utils/`
+
+Contains utility functions used in back-end layer.
+
+| File | Responsibility |
+|------|----------------|
+| `vectorstore_add.py` | Incremental document addition helper (`add_documents_to_vectorstore`) – adds new documents to an existing Qdrant collection without rebuilding it |
+
 ### `agentic_rag/config/`
 
 Central configuration and logging.
@@ -92,8 +101,15 @@ Contains the Streamlit web interface.
 | File / Folder | Purpose |
 |---------------|---------|
 | `app.py` | Main Streamlit application entry point |
-| `utils.py` | Caching, session state, and lazy agent creation helpers |
+| `utils/` | UI-only utilities |
 | `components/` | Reusable UI components (sidebar, chat, uploader, source viewer) |
+
+**`agentic_rag/ui/utils/` contents:**
+
+| File | Responsibility |
+|------|----------------|
+
+
 
 ### Root Files
 
