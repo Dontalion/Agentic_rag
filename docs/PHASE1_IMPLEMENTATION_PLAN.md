@@ -125,7 +125,6 @@ We will implement tasks **sequentially**. After each task is completed and teste
 Current `VectorStoreBuilder.build()` always creates a fresh collection. We need a new function (or extend the builder) that supports adding documents to an **existing** collection.
 
 **Files:**
-- `agentic_rag/ui/utils.py` (new)
 - Possibly small update in `agentic_rag/vectorstore/builder.py` or new helper in `vectorstore/`
 
 **Success Criteria:** All heavy objects are cached. Calling `get_chat_manager(False)` returns a manager with only RAG agent when documents exist.
