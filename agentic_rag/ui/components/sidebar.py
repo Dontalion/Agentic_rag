@@ -8,6 +8,7 @@ import streamlit as st
 from agentic_rag.ui.utils.caching import get_settings_cached, get_qdrant_client
 from agentic_rag.ui.utils.session import reset_chat_history
 from agentic_rag.utils.vectorstore import get_indexed_documents_metadata, get_collection_document_count
+from agentic_rag.ui.components.document_uploader import render_document_uploader
 
 
 def render_sidebar() -> None:
@@ -15,9 +16,13 @@ def render_sidebar() -> None:
     Render the sidebar with document list, stats, and controls.
     """
     with st.sidebar:
-        st.header("📚 Knowledge Base")
+        # Document uploader (first in sidebar)
+        render_document_uploader()
+
+        st.divider()
 
         # Stats
+        st.header("📚 Knowledge Base")
         client = get_qdrant_client()
         doc_count = _get_unique_document_count(client)
         st.metric("Indexed Documents", doc_count)
