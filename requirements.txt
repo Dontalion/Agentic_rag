@@ -16,3 +16,4 @@ requests>=2.31.0
 tqdm>=4.66.0
 qdrant-client
 langchain_qdrant
+streamlit

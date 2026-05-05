@@ -21,7 +21,7 @@ dependencies = [
     "tqdm>=4.66.0",
     "qdrant-client",
     "fastembed",
-    
+    "streamlit>=1.32.0",
 ]
 
 [project.scripts]
