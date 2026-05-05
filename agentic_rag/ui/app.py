@@ -7,6 +7,7 @@ Run with: streamlit run agentic_rag/ui/app.py
 
 import streamlit as st
 from agentic_rag.ui.components.chat_interface import render_chat_interface
+from agentic_rag.ui.components.sidebar import render_sidebar
 
 st.set_page_config(
     page_title="Agentic RAG",
@@ -17,6 +18,9 @@ st.set_page_config(
 
 st.title("Agentic RAG")
 st.caption("Chat with your documents and the web")
+
+# Sidebar
+render_sidebar()
 
 # Main layout: Chat (left) + Sources (right)
 col_chat, col_sources = st.columns([3, 1])
