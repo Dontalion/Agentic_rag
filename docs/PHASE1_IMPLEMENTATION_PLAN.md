@@ -161,7 +161,7 @@ Current `VectorStoreBuilder.build()` always creates a fresh collection. We need 
 
 **Contents:**
 - Header: "Knowledge Base"
-- List of indexed documents (with remove option? — simple version: just list)
+- List of indexed documents (with remove option)
 - Toggle switch: `st.toggle("Enable Web Search", value=False)`
 - Stats: "X documents • Y chunks"
 - Button: "New Chat" (clears `st.session_state.messages`)

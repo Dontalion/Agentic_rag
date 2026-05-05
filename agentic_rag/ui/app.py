@@ -6,6 +6,7 @@ Run with: streamlit run agentic_rag/ui/app.py
 """
 
 import streamlit as st
+from agentic_rag.ui.components.chat_interface import render_chat_interface
 
 st.set_page_config(
     page_title="Agentic RAG",
@@ -21,11 +22,8 @@ st.caption("Chat with your documents and the web")
 col_chat, col_sources = st.columns([3, 1])
 
 with col_chat:
-    st.subheader("Chat")
-    # Placeholder for chat interface (will be implemented in later tasks)
-    st.info("Chat interface will be added in Task 5.")
+    render_chat_interface()
 
 with col_sources:
     st.subheader("Sources")
-    # Placeholder for source viewer (will be implemented in Task 7)
     st.info("Source viewer will appear here when you click on citations.")
